@@ -1,0 +1,206 @@
+
+Q1. Consider the sample of player.txt below, Give Give one/sequence of commands for the following
+[Marks: 20]
+Ravi Shastri, 110, 15-SEP-1880, 10000,20 Sourabh Ganguly, 159, 20-Oct-1991, 7000, 40 Sachin Tendulkar, 267, 12-OCT-1990, 10000, 69
+Rahul Dravid, 200, 3-MAR-1992, 8980, 35
+Ajay Jadeja, 167, 1-FEB-1991, 5000, 27
+
+Rahul Sharma, 20, 23-AUG-2000, 890,0 Ravi Varma, 7, 30-DEC-1999,230, 0
+a. Copy player.txt file from current directory into your home directory
+b. Display 3 record from file player.txt
+c. Display Players Name who scored above 5000 runs and store in run.txt file d. Sort player according to debut date (according to month).
+e. Display the records of players whose name contains Sharma or Varma f. Display player details whose debut month is October.
+g. Display the Total of runs scored by all players. h. Display Records of Ajay and Sourabh (search name are case insensitive)
+h. Display players name whose debut year is 1991.
+J. Display only names of player whose name start with A or S
+
+solution:-
+a.cp player.txt ~/player.txt
+b.head -n 3 player.txt
+c.awk -F, '$4 > 5000 {print $1}' player.txt > run.txt
+d.sort -t, -k3M player.txt
+e.grep -i "Sharma\|Varma" player.txt
+f.awk -F, '$3 ~ /-OCT-/ {print}' player.txt
+g.awk -F, '{sum += $4} END {print "Total Runs: " sum}' player.txt
+h.grep -i "Ajay\|Sourabh" player.txt
+i.awk -F, '$3 ~ /-1991$/ {print $1}' player.txt
+j.awk -F, '$1 ~ /^A|^S/ {print $1}' player.txt
+
+
+
+Q2. Write a (till user press exit, menu should continue) menu driven shell script with following menu. [20 Marks] a. Create file: should copy a file /etc/passwd file into current directory as user.txt.
+b. Display File: Display File should display user name, user id, default shell..
+c. Upper Case: Upper Case should display file in upper case.
+d. Search User: Accept name of user, search if user is in file, display appropriate message.
+e. Delete User: Accepts the group id, delete user details from file, display message
+Exit: Should successfully come out of program
+
+solution:-chamod +x file.sh
+#!/bin/bash
+
+while true; do
+    echo "Menu:"
+    echo "a. Create File"
+    echo "b. Display File"
+    echo "c. Upper Case"
+    echo "d. Search User"
+    echo "e. Delete User"
+    echo "Exit"
+
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        a)
+            cp /etc/passwd user.txt
+            echo "File created: user.txt"
+            ;;
+        b)
+            if [[ -f "user.txt" ]]; then
+                echo "Displaying user.txt:"
+                cat user.txt
+            else
+                echo "File user.txt does not exist."
+            fi
+            ;;
+        c)
+            if [[ -f "user.txt" ]]; then
+                echo "Displaying user.txt in upper case:"
+                tr '[:lower:]' '[:upper:]' < user.txt
+            else
+                echo "File user.txt does not exist."
+            fi
+            ;;
+        d)
+            read -p "Enter the name of the user: " username
+            if [[ -f "user.txt" ]]; then
+                if grep -q "^$username:" user.txt; then
+                    echo "User $username found in the file."
+                else
+                    echo "User $username not found in the file."
+                fi
+            else
+                echo "File user.txt does not exist."
+            fi
+            ;;
+        e)
+            read -p "Enter the group id of the user to delete: " groupid
+            if [[ -f "user.txt" ]]; then
+                if grep -q ":$groupid:" user.txt; then
+                    sed -i "/:$groupid:/d" user.txt
+                    echo "User(s) with group id $groupid deleted from the file."
+                else
+                    echo "No user(s) found with group id $groupid in the file."
+                fi
+            else
+                echo "File user.txt does not exist."
+            fi
+            ;;
+        "Exit")
+            echo "Exiting the program."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice. Please try again."
+            ;;
+    esac
+
+    echo
+done
+
+
+
+
+
+1. Write a menu driven shell script which read option from the user
+a) Read employee details like id, name, phone
+b) Save this into a file located at-directory (Hint: use redirect output)
+c) Copy this file to /tmp directory
+d) Check if file exists at /tmp dir. If yes, print contents of that file.
+e) Exit
+
+solution:-
+#!/bin/bash
+
+while true; do
+    echo "Menu:"
+    echo "a) Read employee details"
+    echo "b) Save details to a file"
+    echo "c) Copy file to /tmp directory"
+    echo "d) Print contents of /tmp file"
+    echo "e) Exit"
+
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        a)
+            read -p "Enter employee ID: " id
+            read -p "Enter employee name: " name
+            read -p "Enter employee phone number: " phone
+            ;;
+        b)
+            echo "ID: $id" > employee.txt
+            echo "Name: $name" >> employee.txt
+            echo "Phone: $phone" >> employee.txt
+            echo "Employee details saved to employee.txt"
+            ;;
+        c)
+            if [[ -f "employee.txt" ]]; then
+                cp employee.txt /tmp/employee.txt
+                echo "File copied to /tmp directory"
+            else
+                echo "File employee.txt does not exist. Please save employee details first."
+            fi
+            ;;
+        d)
+            if [[ -f "/tmp/employee.txt" ]]; then
+                echo "Contents of /tmp/employee.txt:"
+                cat /tmp/employee.txt
+            else
+                echo "File /tmp/employee.txt does not exist."
+            fi
+            ;;
+        e)
+            echo "Exiting the program."
+            exit 0
+            ;;
+        *)
+            echo "Invalid choice. Please try again."
+            ;;
+    esac
+
+    echo
+done
+
+
+
+
+
+
+2. Write a shell script to take input two numbers from the command line and print the sum and multiplication of the
+same.
+
+
+solution:-
+#!/bin/bash
+
+if [ $# -eq 2 ]; then
+    num1=$1
+    num2=$2
+
+    sum=$((num1 + num2))
+    product=$((num1 * num2))
+
+    echo "Sum: $sum"
+    echo "Product: $product"
+else
+    echo "Error: Please provide exactly two numbers as command-line arguments."
+fi
+
+
+
+
+
+
+
+
+
